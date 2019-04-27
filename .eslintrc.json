@@ -16,11 +16,24 @@
     "linebreak-style": ["error", "windows"],
     "space-in-parens": [1, "always"],
     "template-curly-spacing": "off",
-    "prefer-destructuring": ["error", { "object": false, "array": false }],
+    "prefer-destructuring": [
+      "error",
+      {
+        "object": false,
+        "array": false
+      }
+    ],
     "no-console": "off",
     "import/newline-after-import": "off",
     "max-len": 0,
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }]
-  },
-  "plugins": []
+    "quotes": [
+      "error",
+      "single",
+      {
+        "allowTemplateLiterals": true
+      }
+    ],
+    "indent": ["error", 4],
+    "import/prefer-default-export": "off"
+  }
 }
