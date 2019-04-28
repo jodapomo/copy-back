@@ -1,8 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 import { TempUserSchema } from './temp-user.schema';
-import { ItemSchema } from './item.schema';
 
 const AutoIncrement = require( 'mongoose-sequence' )( mongoose );
+
+const options = { timestamps: true };
 
 export const RoomSchema = new Schema(
     {
@@ -11,11 +12,12 @@ export const RoomSchema = new Schema(
             type: String,
         },
         users: [TempUserSchema],
-        items: [ItemSchema],
+        items: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Item',
+        }],
     },
-    {
-        timestamps: true,
-    },
+    options,
 );
 
 RoomSchema.plugin( AutoIncrement, { inc_field: 'id' } );

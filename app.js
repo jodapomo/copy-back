@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import config from './config/config';
+import routes from './routes/index.routes';
 
 const app = express();
 
@@ -10,6 +11,12 @@ app.use( bodyParser.urlencoded( { extended: false } ) );
 
 // parse application/json
 app.use( bodyParser.json() );
+
+// redirect root to /api/v1
+app.get( '/', ( req, res ) => res.redirect( '/api/v1' ) );
+
+// mount all routes on /api/v1 path
+app.use( '/api/v1', routes );
 
 mongoose.connect( process.env.MONGO_URI, config.mongooseOptions, ( err ) => {
     if ( err ) throw err;

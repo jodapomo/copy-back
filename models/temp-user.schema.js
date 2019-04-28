@@ -1,5 +1,7 @@
 import { Schema } from 'mongoose';
 
+const options = { discriminatorKey: 'type', timestamps: true };
+
 export const TempUserSchema = new Schema(
     {
         username: {
@@ -15,4 +17,5 @@ export const TempUserSchema = new Schema(
             type: Date,
         },
     },
+    options,
 );

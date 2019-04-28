@@ -1,8 +1,8 @@
 import { Schema } from 'mongoose';
 
-const options = { timestamps: true };
+const options = { discriminatorKey: 'type' };
 
-export const NoteSchema = new Schema(
+export const TextItemSchema = new Schema(
     {
         content: {
             type: String,

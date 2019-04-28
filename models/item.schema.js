@@ -1,26 +1,26 @@
 import mongoose, { Schema } from 'mongoose';
+import { TempUserSchema } from './temp-user.schema';
+import { NoteSchema } from './note.schema';
 
-const validTypes = ['link', 'text', 'file', 'img', 'video'];
+import { LinkItemSchema } from './item-types/link-item.schema';
+import { TextItemSchema } from './item-types/text-item.schema';
 
-const options = { discriminatorKey: 'type', _id: false };
+// const validTypes = ['link', 'text', 'file', 'img', 'video'];
+
+const options = { discriminatorKey: 'type', timestamps: true };
 
 export const ItemSchema = new Schema(
     {
-        type: {
-            required: true,
-            type: String,
-            enum: validTypes,
-        },
         user: {
-            type: Schema.Types.ObjectId,
-            ref: 'Room.users',
+            type: TempUserSchema,
+            required: true,
         },
-        created_at: {
-            type: Date,
-            default: Date.now,
-        },
+        notes: [NoteSchema],
     },
     options,
 );
 
 export const Item = mongoose.model( 'Item', ItemSchema );
+
+export const LinkItem = Item.discriminator( 'link', LinkItemSchema );
+export const TextItem = Item.discriminator( 'text', TextItemSchema );
