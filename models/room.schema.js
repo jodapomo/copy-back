@@ -11,7 +11,7 @@ export const RoomSchema = new Schema(
             required: true,
             type: String,
         },
-        users: [TempUserSchema],
+        temp_users: [TempUserSchema],
         items: [{
             type: Schema.Types.ObjectId,
             ref: 'Item',
@@ -21,5 +21,7 @@ export const RoomSchema = new Schema(
 );
 
 RoomSchema.plugin( AutoIncrement, { inc_field: 'id' } );
+
+RoomSchema.index( { id: 1 }, { unique: true } );
 
 export const Room = mongoose.model( 'Room', RoomSchema );

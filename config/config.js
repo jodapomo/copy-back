@@ -24,4 +24,5 @@ process.env.MONGO_URI = MONGO_URI;
 module.exports.mongooseOptions = {
     useNewUrlParser: true,
     useCreateIndex: true,
+    // autoIndex: false, --> on prod
 };

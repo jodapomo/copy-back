@@ -35,6 +35,7 @@
     ],
     "indent": ["error", 4],
     "import/prefer-default-export": "off",
-    "padded-blocks": "off"
+    "padded-blocks": "off",
+    "arrow-body-style": "off"
   }
 }
