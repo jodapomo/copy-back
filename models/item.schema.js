@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import { TempUserSchema } from './temp-user.schema';
 import { NoteSchema } from './note.schema';
 
 import { LinkItemSchema } from './item-types/link-item.schema';
@@ -12,8 +11,13 @@ const options = { discriminatorKey: 'type', timestamps: true };
 export const ItemSchema = new Schema(
     {
         user: {
-            type: TempUserSchema,
-            required: true,
+            id: {
+                type: Schema.Types.ObjectId,
+                ref: 'Room.temp_users',
+            },
+            username: {
+                type: String,
+            },
         },
         notes: [NoteSchema],
     },
