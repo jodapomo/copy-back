@@ -31,5 +31,5 @@ module.exports.mongooseOptions = {
 // CORS options
 // ============================================
 module.exports.corsOptions = {
-    origin: ['http://localhost:4200/'],
+    origin: ['http://localhost:4200'],
 };
