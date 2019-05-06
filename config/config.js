@@ -26,3 +26,10 @@ module.exports.mongooseOptions = {
     useCreateIndex: true,
     // autoIndex: false, --> on prod
 };
+
+// ============================================
+// CORS options
+// ============================================
+module.exports.corsOptions = {
+    origin: ['http://localhost:4200/'],
+};

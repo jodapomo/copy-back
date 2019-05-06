@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import config from './config/config';
 import routes from './routes/index.routes';
 
@@ -11,6 +12,9 @@ app.use( bodyParser.urlencoded( { extended: false } ) );
 
 // parse application/json
 app.use( bodyParser.json() );
+
+// enable CORS
+app.use( cors( config.corsOptions ) );
 
 // redirect root to /api/v1
 app.get( '/', ( req, res ) => res.redirect( '/api/v1' ) );
