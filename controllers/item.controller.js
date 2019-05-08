@@ -25,7 +25,7 @@ const createLinkItem = async ( body ) => {
     } catch ( error ) {
 
         throw new Error( {
-            message: 'Error at url inspector',
+            message: 'Error at url inspector.',
             error,
         } );
 

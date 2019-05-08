@@ -29,7 +29,7 @@ export const getRooms = async ( req, res ) => {
 
         return res.status( 500 ).json( {
             ok: false,
-            message: 'Error loading rooms',
+            message: 'Error loading rooms.',
             errors: error,
         } );
 
@@ -60,7 +60,7 @@ export const createRoom = async ( req, res ) => {
 
         return res.status( 500 ).json( {
             ok: false,
-            message: 'Error creating the room',
+            message: 'Error creating the room.',
             errors: error,
         } );
 
@@ -92,8 +92,8 @@ export const getRoomById = async ( req, res ) => {
         if ( !room ) {
             return res.status( 400 ).json( {
                 ok: false,
-                message: `The room with id ${id} does not exist`,
-                errors: { message: `The room with id ${id} does not exist` },
+                message: `The room with id ${id} does not exist.`,
+                errors: { message: `The room with id ${id} does not exist.` },
             } );
         }
 
@@ -106,7 +106,7 @@ export const getRoomById = async ( req, res ) => {
 
         return res.status( 500 ).json( {
             ok: false,
-            message: 'Error finding room',
+            message: 'Error finding room.',
             errors: error,
         } );
 
@@ -133,7 +133,7 @@ export const addItem = async ( req, res ) => {
 
         return res.status( 500 ).json( {
             ok: false,
-            message: 'Error adding the item',
+            message: 'Error adding the item.',
             errors: error,
         } );
 
