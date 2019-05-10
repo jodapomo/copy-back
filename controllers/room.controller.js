@@ -68,6 +68,39 @@ export const createRoom = async ( req, res ) => {
 
 };
 
+export const addUser = async ( req, res ) => {
+
+    try {
+
+        const body = req.body;
+        const id = req.params.id;
+
+        let tempUser = { username: body.username };
+
+        const room = await Room.findOne( { id } );
+
+        tempUser = room.temp_users.create( tempUser );
+        room.temp_users.push( tempUser );
+
+        await room.save();
+
+        return res.status( 201 ).json( {
+            ok: true,
+            user: tempUser,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error adding new user.',
+            errors: error,
+        } );
+
+    }
+
+};
+
 export const getRoomById = async ( req, res ) => {
 
     try {

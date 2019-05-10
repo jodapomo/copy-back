@@ -4,6 +4,7 @@ import {
     createRoom,
     getRoomById,
     addItem,
+    addUser,
 } from '../controllers/room.controller';
 
 const router = express.Router();
@@ -25,5 +26,10 @@ router.route( '/:id/items' )
 
     // POST /api/v1/rooms/:id/items - create a new item for a specific room
     .post( addItem );
+
+router.route( '/:id/users' )
+
+    // POST /api/v1/rooms/:id/users - create a new user for a specific room
+    .post( addUser );
 
 export default router;
