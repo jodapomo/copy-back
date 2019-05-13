@@ -49,16 +49,15 @@ const createTextItem = ( body ) => {
 };
 
 export const createItem = ( body ) => {
+
     const type = body.type;
 
-    switch ( type ) {
-        case 'link':
-            return createLinkItem( body );
+    const types = {
+        link: createLinkItem( body ),
+        text: createTextItem( body ),
+        default: () => null,
+    };
 
-        case 'text':
-            return createTextItem( body );
+    return ( types[type] || types.default )( body );
 
-        default:
-            return null;
-    }
 };

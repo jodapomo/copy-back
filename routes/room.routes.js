@@ -19,7 +19,7 @@ router.route( '/' )
 
 router.route( '/:id' )
 
-    // GET /api/v1/rooms/:roomId - get one room by the id (not mongodb _id, but number auto-increasing id)
+    // GET /api/v1/rooms/:roomId - get one room by the id (not mongodb _id, but numeric auto-increasing id)
     .get( getRoomById );
 
 router.route( '/:id/items' )
