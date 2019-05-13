@@ -53,8 +53,8 @@ export const createItem = ( body ) => {
     const type = body.type;
 
     const types = {
-        link: createLinkItem( body ),
-        text: createTextItem( body ),
+        link: createLinkItem,
+        text: createTextItem,
         default: () => null,
     };
 
