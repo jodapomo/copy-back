@@ -5,6 +5,7 @@ import {
     getRoomById,
     addItem,
     addUser,
+    checkIfRoomLocked,
 } from '../controllers/room.controller';
 
 const router = express.Router();
@@ -21,6 +22,11 @@ router.route( '/:id' )
 
     // GET /api/v1/rooms/:roomId - get one room by the id (not mongodb _id, but numeric auto-increasing id)
     .get( getRoomById );
+
+router.route( '/:id/locked' )
+
+    // GET /api/v1/rooms/:roomId - check if a room are locker with a password
+    .get( checkIfRoomLocked );
 
 router.route( '/:id/items' )
 

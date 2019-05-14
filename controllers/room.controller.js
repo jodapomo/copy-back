@@ -45,7 +45,7 @@ export const createRoom = async ( req, res ) => {
 
         const tempUser = { username: body.username };
 
-        let room = new Room( { name: body.name } );
+        let room = new Room( { name: body.name, password: body.password } );
 
         room.temp_users.push( tempUser );
 
@@ -167,6 +167,39 @@ export const addItem = async ( req, res ) => {
         return res.status( 500 ).json( {
             ok: false,
             message: 'Error adding the item.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+export const checkIfRoomLocked = async ( req, res ) => {
+
+    try {
+
+        const id = req.params.id;
+
+        const room = await Room.findOne( { id }, 'locked' );
+
+        if ( !room ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${id} does not exist.`,
+                errors: { message: `The room with id ${id} does not exist.` },
+            } );
+        }
+
+        return res.status( 200 ).json( {
+            ok: true,
+            locked: room.locked,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error finding room.',
             errors: error,
         } );
 
