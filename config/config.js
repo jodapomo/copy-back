@@ -34,3 +34,12 @@ module.exports.mongooseOptions = {
 module.exports.corsOptions = {
     origin: ['http://localhost:4200'],
 };
+
+// ============================================
+// JWT config
+// ============================================
+module.exports.jwtSecretKey = process.env.JWT_SECRET || 'secret-dev';
+
+module.exports.jwtOptions = {
+    expiresIn: '1h',
+};

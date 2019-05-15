@@ -1,5 +1,7 @@
+import jwt from 'jsonwebtoken';
 import { Room } from '../models/room.schema';
 import { createItem } from './item.controller';
+import config from '../config/config';
 
 export const getRooms = async ( req, res ) => {
 
@@ -72,8 +74,8 @@ export const addUser = async ( req, res ) => {
 
     try {
 
-        const body = req.body;
         const id = req.params.id;
+        const body = req.body;
 
         let tempUser = { username: body.username };
 
@@ -174,7 +176,7 @@ export const addItem = async ( req, res ) => {
 
 };
 
-export const checkIfRoomLocked = async ( req, res ) => {
+export const isLocked = async ( req, res ) => {
 
     try {
 
@@ -200,6 +202,147 @@ export const checkIfRoomLocked = async ( req, res ) => {
         return res.status( 500 ).json( {
             ok: false,
             message: 'Error finding room.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+const generateToken = ( roomId, tempUser ) => {
+
+    const user = {
+        id: tempUser._id,
+        username: tempUser.username,
+        last_login: tempUser.last_login,
+    };
+
+    const token = jwt.sign(
+        {
+            user,
+            roomId,
+        },
+        config.jwtSecretKey,
+        config.jwtOptions,
+    );
+
+    return [user, token];
+};
+
+export const login = async ( req, res ) => {
+
+    try {
+
+        const id = req.params.id;
+        const body = req.body;
+
+        const room = await Room.findOne( { id } );
+
+        if ( !room ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${id} does not exist.`,
+                errors: { message: `The room with id ${id} does not exist.` },
+            } );
+        }
+
+        let tempUser = room.temp_users.find( user => user.username === body.username );
+
+        if ( tempUser ) {
+
+            tempUser.last_login = new Date();
+            tempUser.login = true;
+
+        } else {
+
+            tempUser = { username: body.username };
+            tempUser = room.temp_users.create( tempUser );
+            room.temp_users.push( tempUser );
+
+        }
+
+        await room.save();
+
+        const [user, token] = generateToken( id, tempUser );
+
+        return res.status( 200 ).json( {
+            ok: true,
+            roomId: id,
+            user,
+            token,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error finding room.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+export const checkCredentials = async ( req, res ) => {
+
+    try {
+
+        const id = req.params.id;
+        const body = req.body;
+
+        const room = await Room.findOne( { id }, 'locked password temp_users' );
+
+        if ( !room ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${id} does not exist.`,
+                errors: { message: `The room with id ${id} does not exist.` },
+            } );
+        }
+
+        if ( room.locked && body.password ) {
+
+            room.comparePassword( body.password, ( err, match ) => {
+
+                if ( err ) {
+                    throw new Error( 'Error authenticating the password' );
+                }
+
+                if ( match ) {
+
+                    return res.status( 200 ).json( {
+                        ok: true,
+                    } );
+
+                }
+
+                return res.status( 403 ).json( {
+                    ok: false,
+                    message: `Incorrect password for the room with id ${ id }`,
+                    errors: { message: `Incorrect password for the room with id ${ id }` },
+                } );
+
+            } );
+
+        } else {
+
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `Error authenticating room.`,
+                errors: { message: `Error authenticating room.` },
+            } );
+
+        }
+
+        return null;
+
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error authenticating room.',
             errors: error,
         } );
 
