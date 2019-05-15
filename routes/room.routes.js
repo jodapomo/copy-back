@@ -30,7 +30,7 @@ router.route( '/:roomId' )
 
 router.route( '/:roomId/locked' )
 
-    // GET /api/v1/rooms/:roomId - check if a room are locker with a password
+    // GET /api/v1/rooms/:roomId - check if a room are locked with a password
     .get( isLocked );
 
 router.route( '/:roomId/items' )
