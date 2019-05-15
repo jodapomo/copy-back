@@ -38,6 +38,7 @@
     "padded-blocks": "off",
     "arrow-body-style": "off",
     "no-underscore-dangle": "off",
-    "radix": ["error", "as-needed"]
+    "radix": ["error", "as-needed"],
+    "consistent-return": "off"
   }
 }

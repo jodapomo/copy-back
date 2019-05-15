@@ -56,13 +56,9 @@ RoomSchema.pre( 'save', function ( next ) {
         } );
 } );
 
-RoomSchema.methods.comparePassword = function ( plaintext, callback ) {
+RoomSchema.methods.comparePassword = function ( plaintext ) {
 
-    bcrypt.compare( plaintext, this.password, ( err, res ) => {
-
-        return callback( err, res );
-
-    } );
+    return bcrypt.compare( plaintext, this.password );
 
 };
 

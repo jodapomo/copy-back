@@ -3,6 +3,26 @@ import { Room } from '../models/room.schema';
 import { createItem } from './item.controller';
 import config from '../config/config';
 
+const generateToken = ( roomId, tempUser ) => {
+
+    const user = {
+        id: tempUser._id,
+        username: tempUser.username,
+        last_login: tempUser.last_login,
+    };
+
+    const token = jwt.sign(
+        {
+            user,
+            roomId,
+        },
+        config.jwtSecretKey,
+        config.jwtOptions,
+    );
+
+    return [user, token];
+};
+
 export const getRooms = async ( req, res ) => {
 
     try {
@@ -45,18 +65,25 @@ export const createRoom = async ( req, res ) => {
 
         const body = req.body;
 
-        const tempUser = { username: body.username };
+        let tempUser = { username: body.username };
 
         let room = new Room( { name: body.name, password: body.password } );
 
+        tempUser = room.temp_users.create( tempUser );
         room.temp_users.push( tempUser );
 
         room = await room.save();
 
+        const [user, token] = generateToken( room.id, tempUser );
+
         return res.status( 201 ).json( {
             ok: true,
+            roomId: room.id,
             room,
+            user,
+            token,
         } );
+
 
     } catch ( error ) {
 
@@ -74,12 +101,12 @@ export const addUser = async ( req, res ) => {
 
     try {
 
-        const id = req.params.id;
+        const roomId = req.params.roomId;
         const body = req.body;
 
         let tempUser = { username: body.username };
 
-        const room = await Room.findOne( { id } );
+        const room = await Room.findOne( { id: roomId } );
 
         tempUser = room.temp_users.create( tempUser );
         room.temp_users.push( tempUser );
@@ -110,9 +137,9 @@ export const getRoomById = async ( req, res ) => {
         const skip = parseInt( req.query.skip ) || 0;
         const limit = parseInt( req.query.limit ) || 5;
 
-        const id = req.params.id;
+        const roomId = req.params.roomId;
 
-        const room = await Room.findOne( { id } )
+        const room = await Room.findOne( { id: roomId } )
             .populate( [
                 {
                     path: 'items',
@@ -127,8 +154,8 @@ export const getRoomById = async ( req, res ) => {
         if ( !room ) {
             return res.status( 400 ).json( {
                 ok: false,
-                message: `The room with id ${id} does not exist.`,
-                errors: { message: `The room with id ${id} does not exist.` },
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
             } );
         }
 
@@ -153,7 +180,7 @@ export const addItem = async ( req, res ) => {
 
     try {
 
-        const roomId = req.params.id;
+        const roomId = req.params.roomId;
 
         const item = await createItem( req.body );
 
@@ -180,15 +207,15 @@ export const isLocked = async ( req, res ) => {
 
     try {
 
-        const id = req.params.id;
+        const roomId = req.params.roomId;
 
-        const room = await Room.findOne( { id }, 'locked' );
+        const room = await Room.findOne( { id: roomId }, 'locked' );
 
         if ( !room ) {
             return res.status( 400 ).json( {
                 ok: false,
-                message: `The room with id ${id} does not exist.`,
-                errors: { message: `The room with id ${id} does not exist.` },
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
             } );
         }
 
@@ -209,41 +236,49 @@ export const isLocked = async ( req, res ) => {
 
 };
 
-const generateToken = ( roomId, tempUser ) => {
-
-    const user = {
-        id: tempUser._id,
-        username: tempUser.username,
-        last_login: tempUser.last_login,
-    };
-
-    const token = jwt.sign(
-        {
-            user,
-            roomId,
-        },
-        config.jwtSecretKey,
-        config.jwtOptions,
-    );
-
-    return [user, token];
-};
-
 export const login = async ( req, res ) => {
 
     try {
 
-        const id = req.params.id;
+        const roomId = req.params.roomId;
         const body = req.body;
 
-        const room = await Room.findOne( { id } );
+        const room = await Room.findOne( { id: roomId } );
 
         if ( !room ) {
             return res.status( 400 ).json( {
                 ok: false,
-                message: `The room with id ${id} does not exist.`,
-                errors: { message: `The room with id ${id} does not exist.` },
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
             } );
+        }
+
+        if ( room.locked ) {
+
+            if ( body.password && body.password.length > 0 ) {
+
+                const match = await room.comparePassword( body.password );
+
+                if ( !match ) {
+
+                    return res.status( 403 ).json( {
+                        ok: false,
+                        message: `Incorrect password for the room with id ${ roomId }.`,
+                        errors: { message: `Incorrect password for the room with id ${ roomId }.` },
+                    } );
+
+                }
+
+            } else {
+
+                return res.status( 403 ).json( {
+                    ok: false,
+                    message: `Room is locked and password have not been passed.`,
+                    errors: { message: `Room is locked and password have not been passed.` },
+                } );
+
+            }
+
         }
 
         let tempUser = room.temp_users.find( user => user.username === body.username );
@@ -263,11 +298,11 @@ export const login = async ( req, res ) => {
 
         await room.save();
 
-        const [user, token] = generateToken( id, tempUser );
+        const [user, token] = generateToken( roomId, tempUser );
 
         return res.status( 200 ).json( {
             ok: true,
-            roomId: id,
+            roomId,
             user,
             token,
         } );
@@ -276,7 +311,7 @@ export const login = async ( req, res ) => {
 
         return res.status( 500 ).json( {
             ok: false,
-            message: 'Error finding room.',
+            message: 'Error login room.',
             errors: error,
         } );
 
@@ -288,16 +323,16 @@ export const checkCredentials = async ( req, res ) => {
 
     try {
 
-        const id = req.params.id;
+        const roomId = req.params.roomId;
         const body = req.body;
 
-        const room = await Room.findOne( { id }, 'locked password temp_users' );
+        const room = await Room.findOne( { id: roomId }, 'locked password temp_users' );
 
         if ( !room ) {
             return res.status( 400 ).json( {
                 ok: false,
-                message: `The room with id ${id} does not exist.`,
-                errors: { message: `The room with id ${id} does not exist.` },
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
             } );
         }
 
@@ -306,7 +341,7 @@ export const checkCredentials = async ( req, res ) => {
             room.comparePassword( body.password, ( err, match ) => {
 
                 if ( err ) {
-                    throw new Error( 'Error authenticating the password' );
+                    throw new Error( 'Error authenticating the password.' );
                 }
 
                 if ( match ) {
@@ -319,8 +354,8 @@ export const checkCredentials = async ( req, res ) => {
 
                 return res.status( 403 ).json( {
                     ok: false,
-                    message: `Incorrect password for the room with id ${ id }`,
-                    errors: { message: `Incorrect password for the room with id ${ id }` },
+                    message: `Incorrect password for the room with id ${ roomId }.`,
+                    errors: { message: `Incorrect password for the room with id ${ roomId }.` },
                 } );
 
             } );
