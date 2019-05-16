@@ -338,40 +338,29 @@ export const checkCredentials = async ( req, res ) => {
 
         if ( room.locked && body.password ) {
 
-            room.comparePassword( body.password, ( err, match ) => {
+            const match = await room.comparePassword( body.password );
 
-                if ( err ) {
-                    throw new Error( 'Error authenticating the password.' );
-                }
+            if ( match ) {
 
-                if ( match ) {
-
-                    return res.status( 200 ).json( {
-                        ok: true,
-                    } );
-
-                }
-
-                return res.status( 403 ).json( {
-                    ok: false,
-                    message: `Incorrect password for the room with id ${ roomId }.`,
-                    errors: { message: `Incorrect password for the room with id ${ roomId }.` },
+                return res.status( 200 ).json( {
+                    ok: true,
                 } );
 
-            } );
+            }
 
-        } else {
-
-            return res.status( 400 ).json( {
+            return res.status( 403 ).json( {
                 ok: false,
-                message: `Error authenticating room.`,
-                errors: { message: `Error authenticating room.` },
+                message: `Incorrect password for the room with id ${ roomId }.`,
+                errors: { message: `Incorrect password for the room with id ${ roomId }.` },
             } );
 
         }
 
-        return null;
-
+        return res.status( 400 ).json( {
+            ok: false,
+            message: `Error authenticating room.`,
+            errors: { message: `Error authenticating room.` },
+        } );
 
     } catch ( error ) {
 
