@@ -46,7 +46,6 @@ RoomSchema.pre( 'save', function ( next ) {
         return next();
     }
 
-    console.log( this.password );
     bcrypt.hash( this.password, 10 )
         .then( ( hash ) => {
 
