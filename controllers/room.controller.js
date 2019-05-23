@@ -59,7 +59,7 @@ export const getRooms = async ( req, res ) => {
 
 };
 
-export const createRoom = async ( req, res ) => {
+export const createRoomAndLogin = async ( req, res ) => {
 
     try {
 
@@ -79,7 +79,6 @@ export const createRoom = async ( req, res ) => {
         return res.status( 201 ).json( {
             ok: true,
             roomId: room.id,
-            room,
             user,
             token,
         } );
@@ -139,7 +138,7 @@ export const getRoomById = async ( req, res ) => {
 
         const roomId = req.params.roomId;
 
-        const room = await Room.findOne( { id: roomId } )
+        const room = await Room.findOne( { id: roomId }, '-items' )
             .populate( [
                 {
                     path: 'items',

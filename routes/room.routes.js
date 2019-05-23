@@ -1,7 +1,7 @@
 import express from 'express';
 import {
     getRooms,
-    createRoom,
+    createRoomAndLogin,
     getRoomById,
     addItem,
     addUser,
@@ -19,11 +19,11 @@ router.route( '/' )
     .get( getRooms )
 
     // POST /api/v1/rooms - create a room and add the temp user who created it, then login (return token)
-    .post( createRoom );
+    .post( createRoomAndLogin );
 
 router.route( '/:roomId' )
-    // Auth middleware
-    .all( verifyRoomToken )
+// Auth middleware
+// .all( verifyRoomToken )
 
     // GET /api/v1/rooms/:roomId - get one room by the id (not mongodb _id, but numeric auto-increasing id)
     .get( getRoomById );
