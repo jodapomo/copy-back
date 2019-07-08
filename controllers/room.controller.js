@@ -8,7 +8,7 @@ const generateToken = ( roomId, tempUser ) => {
     const user = {
         id: tempUser._id,
         username: tempUser.username,
-        last_login: tempUser.last_login,
+        lastLogin: tempUser.lastLogin,
     };
 
     const token = jwt.sign(
@@ -69,8 +69,8 @@ export const createRoomAndLogin = async ( req, res ) => {
 
         let room = new Room( { name: body.name, password: body.password } );
 
-        tempUser = room.temp_users.create( tempUser );
-        room.temp_users.push( tempUser );
+        tempUser = room.tempUsers.create( tempUser );
+        room.tempUsers.push( tempUser );
 
         room = await room.save();
 
@@ -107,8 +107,8 @@ export const addUser = async ( req, res ) => {
 
         const room = await Room.findOne( { id: roomId } );
 
-        tempUser = room.temp_users.create( tempUser );
-        room.temp_users.push( tempUser );
+        tempUser = room.tempUsers.create( tempUser );
+        room.tempUsers.push( tempUser );
 
         await room.save();
 
@@ -280,18 +280,18 @@ export const login = async ( req, res ) => {
 
         }
 
-        let tempUser = room.temp_users.find( user => user.username === body.username );
+        let tempUser = room.tempUsers.find( user => user.username === body.username );
 
         if ( tempUser ) {
 
-            tempUser.last_login = new Date();
+            tempUser.lastLogin = new Date();
             tempUser.login = true;
 
         } else {
 
             tempUser = { username: body.username };
-            tempUser = room.temp_users.create( tempUser );
-            room.temp_users.push( tempUser );
+            tempUser = room.tempUsers.create( tempUser );
+            room.tempUsers.push( tempUser );
 
         }
 
@@ -325,7 +325,7 @@ export const checkCredentials = async ( req, res ) => {
         const roomId = req.params.roomId;
         const body = req.body;
 
-        const room = await Room.findOne( { id: roomId }, 'locked password temp_users' );
+        const room = await Room.findOne( { id: roomId }, 'locked password tempUsers' );
 
         if ( !room ) {
             return res.status( 400 ).json( {

@@ -13,7 +13,7 @@ export const ItemSchema = new Schema(
         user: {
             id: {
                 type: Schema.Types.ObjectId,
-                ref: 'Room.temp_users',
+                ref: 'Room.tempUsers',
             },
             username: {
                 type: String,

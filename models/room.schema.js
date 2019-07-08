@@ -29,7 +29,7 @@ export const RoomSchema = new Schema(
                 return false;
             },
         },
-        temp_users: [TempUserSchema],
+        tempUsers: [TempUserSchema],
         items: [{
             type: Schema.Types.ObjectId,
             ref: 'Item',

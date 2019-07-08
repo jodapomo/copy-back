@@ -13,7 +13,7 @@ export const TempUserSchema = new Schema(
             type: Boolean,
             default: true,
         },
-        last_login: {
+        lastLogin: {
             type: Date,
             default: Date.now,
         },
