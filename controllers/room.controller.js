@@ -134,11 +134,11 @@ export const getRoomById = async ( req, res ) => {
     try {
 
         const skip = parseInt( req.query.skip ) || 0;
-        const limit = parseInt( req.query.limit ) || 5;
+        const limit = parseInt( req.query.limit ) || 15;
 
         const roomId = req.params.roomId;
 
-        const room = await Room.findOne( { id: roomId }, '-items' )
+        const room = await Room.findOne( { id: roomId } )
             .populate( [
                 {
                     path: 'items',
