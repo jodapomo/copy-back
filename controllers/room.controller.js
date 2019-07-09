@@ -143,7 +143,7 @@ export const getRoomById = async ( req, res ) => {
                 {
                     path: 'items',
                     options: {
-                        sort: { },
+                        sort: { createdAt: -1 },
                         skip,
                         limit,
                     },
