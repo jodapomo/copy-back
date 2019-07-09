@@ -3,6 +3,102 @@ import { Room } from '../models/room.schema';
 import { createItem } from './item.controller';
 import config from '../config/config';
 
+export const getRoomById = async ( req, res ) => {
+
+    try {
+
+        const skip = parseInt( req.query.skip ) || 0;
+        const limit = parseInt( req.query.limit ) || 15;
+
+        const roomId = req.params.roomId;
+
+        const room = await Room.findOne( { id: roomId } )
+            .populate( [
+                {
+                    path: 'items',
+                    options: {
+                        sort: { createdAt: -1 },
+                        skip,
+                        limit,
+                    },
+                },
+            ] );
+
+        if ( !room ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
+            } );
+        }
+
+        return res.status( 200 ).json( {
+            ok: true,
+            room,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error finding room.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+export const getItemsByRoomId = async ( req, res ) => {
+
+    try {
+
+        const page = parseInt( req.query.page ) || 1;
+        const pageSize = parseInt( req.query.pageSize ) || 15;
+
+        const skip = ( page - 1 ) * pageSize;
+
+        const roomId = req.params.roomId;
+
+        const items = await Room.findOne( { id: roomId } )
+            .select( '-_id' )
+            .select( 'items' )
+            .populate( [
+                {
+                    path: 'items',
+                    options: {
+                        sort: { createdAt: -1 },
+                        skip,
+                        limit: pageSize,
+                    },
+                },
+            ] );
+
+        if ( !items ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
+            } );
+        }
+
+        return res.status( 200 ).json( {
+            ok: true,
+            items: items.items,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error fetching items.',
+            errors: error,
+        } );
+
+    }
+
+};
+
 const generateToken = ( roomId, tempUser ) => {
 
     const user = {
@@ -129,51 +225,6 @@ export const addUser = async ( req, res ) => {
 
 };
 
-export const getRoomById = async ( req, res ) => {
-
-    try {
-
-        const skip = parseInt( req.query.skip ) || 0;
-        const limit = parseInt( req.query.limit ) || 15;
-
-        const roomId = req.params.roomId;
-
-        const room = await Room.findOne( { id: roomId } )
-            .populate( [
-                {
-                    path: 'items',
-                    options: {
-                        sort: { createdAt: -1 },
-                        skip,
-                        limit,
-                    },
-                },
-            ] );
-
-        if ( !room ) {
-            return res.status( 400 ).json( {
-                ok: false,
-                message: `The room with id ${ roomId } does not exist.`,
-                errors: { message: `The room with id ${ roomId } does not exist.` },
-            } );
-        }
-
-        return res.status( 200 ).json( {
-            ok: true,
-            room,
-        } );
-
-    } catch ( error ) {
-
-        return res.status( 500 ).json( {
-            ok: false,
-            message: 'Error finding room.',
-            errors: error,
-        } );
-
-    }
-
-};
 
 export const addItem = async ( req, res ) => {
 

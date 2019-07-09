@@ -8,6 +8,7 @@ import {
     isLocked,
     checkCredentials,
     login,
+    getItemsByRoomId,
 } from '../controllers/room.controller';
 import { verifyRoomToken } from '../middlewares/roomAuth.middleware';
 
@@ -34,6 +35,9 @@ router.route( '/:roomId/locked' )
     .get( isLocked );
 
 router.route( '/:roomId/items' )
+
+    // GET /api/v1/rooms/:roomId/items - get items for a specific room
+    .get( getItemsByRoomId )
 
     // POST /api/v1/rooms/:id/items - create a new item for a specific room
     .post( addItem );
