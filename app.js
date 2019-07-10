@@ -1,4 +1,5 @@
 import express from 'express';
+import http from 'http';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -6,6 +7,9 @@ import config from './config/config';
 import routes from './routes/index.routes';
 
 const app = express();
+const server = http.Server( app );
+const io = require( 'socket.io' )( server );
+
 
 // parse application/x-www-form-urlencoded
 app.use( bodyParser.urlencoded( { extended: false } ) );
@@ -22,10 +26,18 @@ app.get( '/', ( req, res ) => res.redirect( '/api/v1' ) );
 // mount all routes on /api/v1 path
 app.use( '/api/v1', routes );
 
+io.on( 'connection', ( socket ) => {
+    console.log( 'User connected' );
+
+    socket.on( 'disconnect', () => {
+        console.log( 'User disconnected' );
+    } );
+} );
+
 mongoose.connect( process.env.MONGO_URI, config.mongooseOptions, ( err ) => {
     if ( err ) throw err;
 
     console.log( `MongoDB: \x1b[32m%s\x1b[0m`, 'ONLINE' );
 } );
 
-app.listen( process.env.PORT, () => console.log( `Express server on port ${ process.env.PORT }: \x1b[32m%s\x1b[0m`, 'online' ) );
+server.listen( process.env.PORT, () => console.log( `Express server on port ${ process.env.PORT }: \x1b[32m%s\x1b[0m`, 'online' ) );
