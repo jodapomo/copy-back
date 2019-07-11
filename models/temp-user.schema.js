@@ -17,6 +17,11 @@ export const TempUserSchema = new Schema(
             type: Date,
             default: Date.now,
         },
+        admin: {
+            required: true,
+            type: Boolean,
+            default: false,
+        },
     },
     options,
 );

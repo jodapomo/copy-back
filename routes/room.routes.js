@@ -9,17 +9,24 @@ import {
     checkCredentials,
     login,
     getItemsByRoomId,
+    getAuthUser,
 } from '../controllers/room.controller';
 import { verifyRoomToken } from '../middlewares/roomAuth.middleware';
 
 const router = express.Router();
 
+// ============================================
+// /api/v1/rooms
+// ============================================
+
 router.route( '/' )
 
     // GET /api/v1/rooms - get all rooms
-    .get( getRooms )
+    .get( getRooms );
 
-    // POST /api/v1/rooms - create a room and add the temp user who created it, then login (return token)
+router.route( '/login' )
+
+    // POST /api/v1/rooms/login - create a room and add the temp user who created it, then login (return token)
     .post( createRoomAndLogin );
 
 router.route( '/:roomId' )
@@ -56,6 +63,12 @@ router.route( '/:roomId/login' )
 
     // POST /api/v1/rooms/:id/login - create and return a session token for a specific room
     .post( login );
+
+router.route( '/:roomId/user' )
+    // Auth middleware
+    .all( verifyRoomToken )
+    // GET /api/v1/rooms/:id/user - return the decoded user from a token pass by Auth Headers
+    .get( getAuthUser );
 
 
 export default router;

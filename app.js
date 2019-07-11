@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import config from './config/config';
 import routes from './routes/index.routes';
+import sockets from './sockets/index.sockets';
 
 const app = express();
 const server = http.Server( app );
@@ -26,13 +27,8 @@ app.get( '/', ( req, res ) => res.redirect( '/api/v1' ) );
 // mount all routes on /api/v1 path
 app.use( '/api/v1', routes );
 
-io.on( 'connection', ( socket ) => {
-    console.log( 'User connected' );
-
-    socket.on( 'disconnect', () => {
-        console.log( 'User disconnected' );
-    } );
-} );
+// sockets
+sockets( io );
 
 mongoose.connect( process.env.MONGO_URI, config.mongooseOptions, ( err ) => {
     if ( err ) throw err;

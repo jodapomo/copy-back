@@ -41,5 +41,5 @@ module.exports.corsOptions = {
 module.exports.jwtSecretKey = process.env.JWT_SECRET || 'secret-dev';
 
 module.exports.jwtOptions = {
-    expiresIn: '1h',
+    expiresIn: '365d',
 };

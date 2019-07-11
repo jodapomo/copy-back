@@ -20,6 +20,8 @@ export const verifyRoomToken = ( req, res, next ) => {
                 } );
             }
 
+            req.user = decoded.user;
+
             next();
 
         } );

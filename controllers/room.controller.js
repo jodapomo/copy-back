@@ -99,26 +99,6 @@ export const getItemsByRoomId = async ( req, res ) => {
 
 };
 
-const generateToken = ( roomId, tempUser ) => {
-
-    const user = {
-        id: tempUser._id,
-        username: tempUser.username,
-        lastLogin: tempUser.lastLogin,
-    };
-
-    const token = jwt.sign(
-        {
-            user,
-            roomId,
-        },
-        config.jwtSecretKey,
-        config.jwtOptions,
-    );
-
-    return [user, token];
-};
-
 export const getRooms = async ( req, res ) => {
 
     try {
@@ -148,43 +128,6 @@ export const getRooms = async ( req, res ) => {
         return res.status( 500 ).json( {
             ok: false,
             message: 'Error loading rooms.',
-            errors: error,
-        } );
-
-    }
-
-};
-
-export const createRoomAndLogin = async ( req, res ) => {
-
-    try {
-
-        const body = req.body;
-
-        let tempUser = { username: body.username };
-
-        let room = new Room( { name: body.name, password: body.password } );
-
-        tempUser = room.tempUsers.create( tempUser );
-        room.tempUsers.push( tempUser );
-
-        room = await room.save();
-
-        const [user, token] = generateToken( room.id, tempUser );
-
-        return res.status( 201 ).json( {
-            ok: true,
-            roomId: room.id,
-            user,
-            token,
-        } );
-
-
-    } catch ( error ) {
-
-        return res.status( 500 ).json( {
-            ok: false,
-            message: 'Error creating the room.',
             errors: error,
         } );
 
@@ -253,37 +196,25 @@ export const addItem = async ( req, res ) => {
 
 };
 
-export const isLocked = async ( req, res ) => {
+const generateToken = ( roomId, tempUser ) => {
 
-    try {
+    const user = {
+        _id: tempUser._id,
+        username: tempUser.username,
+        lastLogin: tempUser.lastLogin,
+        admin: tempUser.admin,
+    };
 
-        const roomId = req.params.roomId;
+    const token = jwt.sign(
+        {
+            user,
+            roomId,
+        },
+        config.jwtSecretKey,
+        config.jwtOptions,
+    );
 
-        const room = await Room.findOne( { id: roomId }, 'locked' );
-
-        if ( !room ) {
-            return res.status( 400 ).json( {
-                ok: false,
-                message: `The room with id ${ roomId } does not exist.`,
-                errors: { message: `The room with id ${ roomId } does not exist.` },
-            } );
-        }
-
-        return res.status( 200 ).json( {
-            ok: true,
-            locked: room.locked,
-        } );
-
-    } catch ( error ) {
-
-        return res.status( 500 ).json( {
-            ok: false,
-            message: 'Error finding room.',
-            errors: error,
-        } );
-
-    }
-
+    return [user, token];
 };
 
 export const login = async ( req, res ) => {
@@ -311,7 +242,7 @@ export const login = async ( req, res ) => {
 
                 if ( !match ) {
 
-                    return res.status( 403 ).json( {
+                    return res.status( 400 ).json( {
                         ok: false,
                         message: `Incorrect password for the room with id ${ roomId }.`,
                         errors: { message: `Incorrect password for the room with id ${ roomId }.` },
@@ -321,7 +252,7 @@ export const login = async ( req, res ) => {
 
             } else {
 
-                return res.status( 403 ).json( {
+                return res.status( 400 ).json( {
                     ok: false,
                     message: `Room is locked and password have not been passed.`,
                     errors: { message: `Room is locked and password have not been passed.` },
@@ -336,7 +267,7 @@ export const login = async ( req, res ) => {
         if ( tempUser ) {
 
             tempUser.lastLogin = new Date();
-            tempUser.login = true;
+            tempUser.online = true;
 
         } else {
 
@@ -362,6 +293,76 @@ export const login = async ( req, res ) => {
         return res.status( 500 ).json( {
             ok: false,
             message: 'Error login room.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+export const createRoomAndLogin = async ( req, res ) => {
+
+    try {
+
+        const body = req.body;
+
+        let tempUser = { username: body.username, admin: true };
+
+        let room = new Room( { name: body.name, password: body.password } );
+
+        tempUser = room.tempUsers.create( tempUser );
+        room.tempUsers.push( tempUser );
+
+        room = await room.save();
+
+        const [user, token] = generateToken( room.id, tempUser );
+
+        return res.status( 201 ).json( {
+            ok: true,
+            roomId: room.id,
+            user,
+            token,
+        } );
+
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error creating the room.',
+            errors: error,
+        } );
+
+    }
+
+};
+
+export const isLocked = async ( req, res ) => {
+
+    try {
+
+        const roomId = req.params.roomId;
+
+        const room = await Room.findOne( { id: roomId }, 'locked' );
+
+        if ( !room ) {
+            return res.status( 400 ).json( {
+                ok: false,
+                message: `The room with id ${ roomId } does not exist.`,
+                errors: { message: `The room with id ${ roomId } does not exist.` },
+            } );
+        }
+
+        return res.status( 200 ).json( {
+            ok: true,
+            locked: room.locked,
+        } );
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Error finding room.',
             errors: error,
         } );
 
@@ -398,7 +399,7 @@ export const checkCredentials = async ( req, res ) => {
 
             }
 
-            return res.status( 403 ).json( {
+            return res.status( 400 ).json( {
                 ok: false,
                 message: `Incorrect password for the room with id ${ roomId }.`,
                 errors: { message: `Incorrect password for the room with id ${ roomId }.` },
@@ -422,4 +423,26 @@ export const checkCredentials = async ( req, res ) => {
 
     }
 
+};
+
+export const getAuthUser = ( req, res ) => {
+    try {
+
+        const user = req.user;
+
+        return res.status( 200 ).json( {
+            ok: true,
+            user,
+        } );
+
+
+    } catch ( error ) {
+
+        return res.status( 500 ).json( {
+            ok: false,
+            message: 'Server error.',
+            errors: error,
+        } );
+
+    }
 };
