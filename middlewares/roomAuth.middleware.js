@@ -12,7 +12,7 @@ export const verifyRoomToken = ( req, res, next ) => {
 
         jwt.verify( token, config.jwtSecretKey, ( err, decoded ) => {
 
-            if ( err || decoded.roomId !== roomId ) {
+            if ( err || Number( decoded.roomId ) !== Number( roomId ) ) {
                 return res.status( 401 ).json( {
                     ok: false,
                     message: `Unauthorized.`,
