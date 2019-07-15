@@ -39,6 +39,7 @@
     "arrow-body-style": "off",
     "no-underscore-dangle": "off",
     "radix": ["error", "as-needed"],
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "no-param-reassign": "off"
   }
 }
