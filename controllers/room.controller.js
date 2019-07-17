@@ -177,6 +177,7 @@ export const addItem = async ( req, res ) => {
         const user = {
             _id: req.user._id,
             username: req.user.username,
+            admin: req.user.admin,
         };
 
 

@@ -18,6 +18,10 @@ export const ItemSchema = new Schema(
             username: {
                 type: String,
             },
+            admin: {
+                type: Boolean,
+                default: false,
+            },
         },
         notes: [NoteSchema],
     },
