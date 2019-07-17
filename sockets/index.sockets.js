@@ -1,4 +1,6 @@
-import { userJoin, userLeave } from './room.sockets';
+import {
+    userJoin, userLeave, newItem, disconnect,
+} from './room.sockets';
 
 export default ( io ) => {
 
@@ -9,9 +11,12 @@ export default ( io ) => {
 
         socket.on( 'userLeave', () => userLeave( socket ) );
 
+        socket.on( 'newItem', item => newItem( socket, item ) );
 
         socket.on( 'disconnect', () => {
             console.log( 'User disconnected' );
+
+            disconnect( socket );
         } );
 
     } );

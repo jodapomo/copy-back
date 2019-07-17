@@ -11,7 +11,7 @@ const options = { discriminatorKey: 'type', timestamps: true };
 export const ItemSchema = new Schema(
     {
         user: {
-            id: {
+            _id: {
                 type: Schema.Types.ObjectId,
                 ref: 'Room.tempUsers',
             },

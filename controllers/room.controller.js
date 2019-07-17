@@ -174,8 +174,13 @@ export const addItem = async ( req, res ) => {
     try {
 
         const roomId = req.params.roomId;
+        const user = {
+            _id: req.user._id,
+            username: req.user.username,
+        };
 
-        const item = await createItem( req.body );
+
+        const item = await createItem( req.body, user );
 
         await Room.updateOne( { id: roomId }, { $push: { items: item._id } } );
 

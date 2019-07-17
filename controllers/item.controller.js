@@ -1,7 +1,7 @@
 import urlMetadata from 'url-metadata';
 import { LinkItem, TextItem } from '../models/item.schema';
 
-const createLinkItem = async ( body ) => {
+const createLinkItem = async ( body, user ) => {
 
     try {
 
@@ -9,10 +9,7 @@ const createLinkItem = async ( body ) => {
 
         const item = new LinkItem(
             {
-                user: {
-                    id: body.userId,
-                    username: body.username,
-                },
+                user,
                 link: body.link,
                 title: metadata.title,
                 description: metadata.description,
@@ -33,14 +30,11 @@ const createLinkItem = async ( body ) => {
 
 };
 
-const createTextItem = ( body ) => {
+const createTextItem = ( body, user ) => {
 
     const newItem = new TextItem(
         {
-            user: {
-                id: body.userId,
-                username: body.username,
-            },
+            user,
             content: body.content,
         },
     );
@@ -48,16 +42,16 @@ const createTextItem = ( body ) => {
     return newItem.save();
 };
 
-export const createItem = ( body ) => {
+const TYPES = {
+    link: createLinkItem,
+    text: createTextItem,
+    default: () => null,
+};
+
+export const createItem = ( body, user ) => {
 
     const type = body.type;
 
-    const types = {
-        link: createLinkItem,
-        text: createTextItem,
-        default: () => null,
-    };
-
-    return ( types[type] || types.default )( body );
+    return ( TYPES[type] || TYPES.default )( body, user );
 
 };

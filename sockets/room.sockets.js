@@ -40,10 +40,7 @@ export const userJoin = async ( socket, data ) => {
                 admin: tempUser.admin,
             };
 
-            const message = `${ socket.username } join the room with id: ${ socket.roomId }`;
-            console.log( message );
-
-            return socket.to( roomId ).emit( 'userJoin', user );
+            return socket.in( roomId ).emit( 'userJoin', user );
 
         } );
 
@@ -93,12 +90,73 @@ export const userLeave = async ( socket ) => {
                 online: tempUser.online,
             };
 
-            const message = `${ socket.username } leave the room with id: ${ socket.roomId }`;
-            console.log( message );
-
             return socket.to( roomId ).emit( 'userLeave', user );
 
         } );
+
+
+    } catch ( error ) {
+
+        return socket.to( socket.roomId ).emit( 'userLeave', null );
+
+    }
+
+};
+
+export const newItem = ( socket, item ) => {
+
+    try {
+
+        return socket.to( socket.roomId ).emit( 'newItem', item );
+
+    } catch ( error ) {
+
+        return socket.to( socket.roomId ).emit( 'newItem', null );
+
+    }
+
+};
+
+export const disconnect = async ( socket ) => {
+
+    try {
+
+        const roomId = socket.roomId;
+        const username = socket.username;
+
+        if ( !roomId || !username ) {
+            return;
+        }
+
+        const room = await Room.findOne( { id: roomId } );
+
+        if ( !room ) {
+            socket.to( roomId ).emit( 'userLeave', null );
+            return;
+        }
+
+        const tempUser = room.tempUsers.find( user => user.username === username );
+
+        if ( tempUser ) {
+
+            tempUser.lastLogin = new Date();
+            tempUser.online = false;
+
+        } else {
+            socket.to( roomId ).emit( 'userLeave', null );
+            return;
+        }
+
+        await room.save();
+
+        const user = {
+            _id: tempUser._id,
+            username: tempUser.username,
+            lastLogin: tempUser.lastLogin,
+            online: tempUser.online,
+        };
+
+        return socket.to( roomId ).emit( 'userLeave', user );
 
 
     } catch ( error ) {
