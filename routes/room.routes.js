@@ -1,10 +1,8 @@
 import express from 'express';
 import {
-    getRooms,
     createRoomAndLogin,
     getRoomById,
     addItem,
-    addUser,
     isLocked,
     checkCredentials,
     login,

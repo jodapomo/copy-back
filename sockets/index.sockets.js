@@ -5,7 +5,6 @@ import {
 export default ( io ) => {
 
     io.on( 'connection', ( socket ) => {
-        console.log( 'User connected' );
 
         socket.on( 'userJoin', data => userJoin( socket, data ) );
 
@@ -14,8 +13,6 @@ export default ( io ) => {
         socket.on( 'newItem', item => newItem( socket, item ) );
 
         socket.on( 'disconnect', () => {
-            console.log( 'User disconnected' );
-
             disconnect( socket );
         } );
 
