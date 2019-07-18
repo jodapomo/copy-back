@@ -31,8 +31,14 @@ module.exports.mongooseOptions = {
 // ============================================
 // CORS options
 // ============================================
+const allowedOrigins = ['http://localhost:4200'];
+
+if ( process.env.ORIGIN ) {
+    allowedOrigins.push( process.env.ORIGIN );
+}
+
 module.exports.corsOptions = {
-    origin: ['http://localhost:4200'],
+    origin: allowedOrigins,
 };
 
 // ============================================
