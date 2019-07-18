@@ -25,7 +25,7 @@ module.exports.mongooseOptions = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    // autoIndex: false, --> on prod
+    autoIndex: false,
 };
 
 // ============================================
