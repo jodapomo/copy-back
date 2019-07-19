@@ -37,5 +37,3 @@ mongoose.connect( process.env.MONGO_URI, config.mongooseOptions, ( err ) => {
 } );
 
 server.listen( process.env.PORT, () => console.log( `Express server on port ${ process.env.PORT }: \x1b[32m%s\x1b[0m`, 'online' ) );
-
-console.log( process.env );

@@ -4,7 +4,7 @@ import roomRoutes from './room.routes';
 
 const router = express.Router();
 
-router.get( '/', ( req, res ) => res.send( 'OK!' ) );
+router.get( '/', ( req, res ) => res.send( `Server OK! running on ${process.env.NODE_ENV} mode.` ) );
 
 router.use( '/inspector', inspectorRoutes );
 router.use( '/rooms', roomRoutes );
