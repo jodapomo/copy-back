@@ -13,9 +13,10 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 // ============================================
 let MONGO_URI;
 
-if ( process.env.NODE_ENV === 'dev' ) {
+if (process.env.NODE_ENV === 'dev') {
     MONGO_URI = 'mongodb://localhost:27017/copy';
 } else {
+    // eslint-disable-next-line prefer-destructuring
     MONGO_URI = process.env.MONGO_URI;
 }
 
@@ -33,8 +34,8 @@ module.exports.mongooseOptions = {
 // ============================================
 const allowedOrigins = ['http://localhost:4200'];
 
-if ( process.env.ORIGIN ) {
-    allowedOrigins.push( process.env.ORIGIN );
+if (process.env.ORIGIN) {
+    allowedOrigins.push(process.env.ORIGIN);
 }
 
 module.exports.corsOptions = {

@@ -5,7 +5,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { TempUserSchema } from './temp-user.schema';
 
-const AutoIncrement = require( 'mongoose-sequence' )( mongoose );
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const options = { timestamps: true };
 
@@ -21,8 +21,8 @@ export const RoomSchema = new Schema(
         },
         locked: {
             type: Boolean,
-            default: function () {
-                if ( this.password ) {
+            default: function() {
+                if (this.password) {
                     return true;
                 }
 
@@ -30,43 +30,37 @@ export const RoomSchema = new Schema(
             },
         },
         tempUsers: [TempUserSchema],
-        items: [{
-            type: Schema.Types.ObjectId,
-            ref: 'Item',
-        }],
+        items: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Item',
+            },
+        ],
     },
-    options,
+    options
 );
 
-
 // eslint-disable-next-line consistent-return
-RoomSchema.pre( 'save', function ( next ) {
-
-    if ( !this.isModified( 'password' ) || this.password === undefined ) {
+RoomSchema.pre('save', function(next) {
+    if (!this.isModified('password') || this.password === undefined) {
         return next();
     }
 
-    bcrypt.hash( this.password, 10 )
-        .then( ( hash ) => {
+    bcrypt.hash(this.password, 10).then(hash => {
+        this.password = hash;
+        return next();
+    });
+});
 
-            this.password = hash;
-            return next();
-
-        } );
-} );
-
-RoomSchema.methods.comparePassword = function ( plaintext ) {
-
-    return bcrypt.compare( plaintext, this.password );
-
+RoomSchema.methods.comparePassword = function(plaintext) {
+    return bcrypt.compare(plaintext, this.password);
 };
 
-RoomSchema.plugin( AutoIncrement, { inc_field: 'id' } );
+RoomSchema.plugin(AutoIncrement, { inc_field: 'id' });
 
-RoomSchema.index( { id: 1 }, { unique: true } );
+RoomSchema.index({ id: 1 }, { unique: true });
 
-RoomSchema.methods.toJSON = function () {
-
+RoomSchema.methods.toJSON = function() {
     const room = this.toObject();
 
     delete room.password;
@@ -74,4 +68,4 @@ RoomSchema.methods.toJSON = function () {
     return room;
 };
 
-export const Room = mongoose.model( 'Room', RoomSchema );
+export const Room = mongoose.model('Room', RoomSchema);

@@ -25,10 +25,10 @@ export const ItemSchema = new Schema(
         },
         notes: [NoteSchema],
     },
-    options,
+    options
 );
 
-export const Item = mongoose.model( 'Item', ItemSchema );
+export const Item = mongoose.model('Item', ItemSchema);
 
-export const LinkItem = Item.discriminator( 'link', LinkItemSchema );
-export const TextItem = Item.discriminator( 'text', TextItemSchema );
+export const LinkItem = Item.discriminator('link', LinkItemSchema);
+export const TextItem = Item.discriminator('text', TextItemSchema);

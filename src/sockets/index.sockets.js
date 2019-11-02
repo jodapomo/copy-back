@@ -1,21 +1,15 @@
-import {
-    userJoin, userLeave, newItem, disconnect,
-} from './room.sockets';
+import { userJoin, userLeave, newItem, disconnect } from './room.sockets';
 
-export default ( io ) => {
+export default io => {
+    io.on('connection', socket => {
+        socket.on('userJoin', data => userJoin(socket, data));
 
-    io.on( 'connection', ( socket ) => {
+        socket.on('userLeave', () => userLeave(socket));
 
-        socket.on( 'userJoin', data => userJoin( socket, data ) );
+        socket.on('newItem', item => newItem(socket, item));
 
-        socket.on( 'userLeave', () => userLeave( socket ) );
-
-        socket.on( 'newItem', item => newItem( socket, item ) );
-
-        socket.on( 'disconnect', () => {
-            disconnect( socket );
-        } );
-
-    } );
-
+        socket.on('disconnect', () => {
+            disconnect(socket);
+        });
+    });
 };

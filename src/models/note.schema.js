@@ -9,5 +9,5 @@ export const NoteSchema = new Schema(
             required: true,
         },
     },
-    options,
+    options
 );

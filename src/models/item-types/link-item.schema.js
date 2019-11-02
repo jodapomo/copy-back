@@ -18,5 +18,5 @@ export const LinkItemSchema = new Schema(
             type: String,
         },
     },
-    options,
+    options
 );

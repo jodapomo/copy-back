@@ -3,7 +3,7 @@
     "es6": true,
     "node": true
   },
-  "extends": "airbnb-base",
+  "extends": ["wesbos"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
@@ -13,33 +13,16 @@
     "sourceType": "module"
   },
   "rules": {
-    "linebreak-style": ["off"],
-    "space-in-parens": [1, "always"],
-    "template-curly-spacing": "off",
-    "prefer-destructuring": [
+    "camelcase": 0,
+    "no-console": 2,
+    "prettier/prettier": [
       "error",
       {
-        "object": false,
-        "array": false
+        "trailingComma": "es5",
+        "singleQuote": true,
+        "printWidth": 120,
+        "tabWidth": 4
       }
-    ],
-    "no-console": "off",
-    "import/newline-after-import": "off",
-    "max-len": 0,
-    "quotes": [
-      "error",
-      "single",
-      {
-        "allowTemplateLiterals": true
-      }
-    ],
-    "indent": ["error", 4, { "SwitchCase": 1 }],
-    "import/prefer-default-export": "off",
-    "padded-blocks": "off",
-    "arrow-body-style": "off",
-    "no-underscore-dangle": "off",
-    "radix": ["error", "as-needed"],
-    "consistent-return": "off",
-    "no-param-reassign": "off"
+    ]
   }
 }

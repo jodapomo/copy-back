@@ -23,5 +23,5 @@ export const TempUserSchema = new Schema(
             default: false,
         },
     },
-    options,
+    options
 );

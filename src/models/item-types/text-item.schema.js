@@ -9,5 +9,5 @@ export const TextItemSchema = new Schema(
             required: true,
         },
     },
-    options,
+    options
 );

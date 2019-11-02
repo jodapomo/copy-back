@@ -17,49 +17,54 @@ const router = express.Router();
 // /api/v1/rooms
 // ============================================
 
-router.route( '/login' )
+router
+    .route('/login')
 
     // POST /api/v1/rooms/login - create a room and add the temp user who created it, then login (return token)
-    .post( createRoomAndLogin );
+    .post(createRoomAndLogin);
 
-router.route( '/:roomId' )
+router
+    .route('/:roomId')
     // Auth middleware
-    .all( verifyRoomToken )
+    .all(verifyRoomToken)
 
     // GET /api/v1/rooms/:roomId - get one room by the id (not mongodb _id, but numeric auto-increasing id)
-    .get( getRoomById );
+    .get(getRoomById);
 
-router.route( '/:roomId/locked' )
+router
+    .route('/:roomId/locked')
 
     // GET /api/v1/rooms/:roomId - check if a room are locked with a password
-    .get( isLocked );
+    .get(isLocked);
 
-router.route( '/:roomId/items' )
+router
+    .route('/:roomId/items')
     // Auth middleware
-    .all( verifyRoomToken )
+    .all(verifyRoomToken)
 
     // GET /api/v1/rooms/:roomId/items - get items for a specific room
-    .get( getItemsByRoomId )
+    .get(getItemsByRoomId)
 
     // POST /api/v1/rooms/:id/items - create a new item for a specific room
-    .post( addItem );
+    .post(addItem);
 
-
-router.route( '/:roomId/credentials' )
+router
+    .route('/:roomId/credentials')
 
     // POST /api/v1/rooms/:id/login - check room credentials (password)
-    .post( checkCredentials );
+    .post(checkCredentials);
 
-router.route( '/:roomId/login' )
+router
+    .route('/:roomId/login')
 
     // POST /api/v1/rooms/:id/login - create and return a session token for a specific room
-    .post( login );
+    .post(login);
 
-router.route( '/:roomId/user' )
+router
+    .route('/:roomId/user')
     // Auth middleware
-    .all( verifyRoomToken )
+    .all(verifyRoomToken)
     // GET /api/v1/rooms/:id/user - return the decoded user from a token pass by Auth Headers
-    .get( getAuthUser );
-
+    .get(getAuthUser);
 
 export default router;

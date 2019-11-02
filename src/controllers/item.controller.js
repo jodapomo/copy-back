@@ -1,43 +1,32 @@
 import urlMetadata from 'url-metadata';
 import { LinkItem, TextItem } from '../models/item.schema';
 
-const createLinkItem = async ( body, user ) => {
-
+const createLinkItem = async (body, user) => {
     try {
+        const metadata = await urlMetadata(body.link);
 
-        const metadata = await urlMetadata( body.link );
-
-        const item = new LinkItem(
-            {
-                user,
-                link: body.link,
-                title: metadata.title,
-                description: metadata.description,
-                image: metadata.image,
-            },
-        );
+        const item = new LinkItem({
+            user,
+            link: body.link,
+            title: metadata.title,
+            description: metadata.description,
+            image: metadata.image,
+        });
 
         return item.save();
-
-    } catch ( error ) {
-
-        throw new Error( {
+    } catch (error) {
+        throw new Error({
             message: 'Error at url inspector.',
             error,
-        } );
-
+        });
     }
-
 };
 
-const createTextItem = ( body, user ) => {
-
-    const newItem = new TextItem(
-        {
-            user,
-            content: body.content,
-        },
-    );
+const createTextItem = (body, user) => {
+    const newItem = new TextItem({
+        user,
+        content: body.content,
+    });
 
     return newItem.save();
 };
@@ -48,10 +37,8 @@ const TYPES = {
     default: () => null,
 };
 
-export const createItem = ( body, user ) => {
+export const createItem = (body, user) => {
+    const { type } = body;
 
-    const type = body.type;
-
-    return ( TYPES[type] || TYPES.default )( body, user );
-
+    return (TYPES[type] || TYPES.default)(body, user);
 };
