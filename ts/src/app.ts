@@ -1,21 +1,26 @@
-import 'reflect-metadata'; // For use of @Decorators
-
+import 'reflect-metadata';
 import express from 'express';
+import http from 'http';
+import chalk from 'chalk';
 import config from './config';
 
 async function startServer() {
   const app = express();
+  const server = new http.Server(app);
 
-  app.listen(config.port, err => {
+  const log = console.log;
+
+  await require('./loaders').init({ expressApp: app, httpServer: server });
+
+  server.listen(config.port, (err: any) => {
     if (err) {
-      console.error(err);
+      log(err);
       process.exit(1);
       return;
     }
-    console.log(`
-      #######################################
-          Server listening on port: ${config.port} 
-      #######################################
+
+    log(`
+          Server listening on port: ${chalk.green(String(config.port))} 
     `);
   });
 }

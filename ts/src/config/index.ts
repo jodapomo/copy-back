@@ -1,8 +1,6 @@
-import dotenv from 'dotenv';
-
 process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
-const envFound = dotenv.config();
+const envFound = require('dotenv').config();
 
 if (envFound.error) {
   console.error("Couldn't find .env file");
@@ -10,7 +8,7 @@ if (envFound.error) {
 }
 
 export default {
-  port: parseInt(process.env.PORT, 10),
+  port: parseInt(process.env.PORT || '3000', 10),
   databaseURL: process.env.MONGODB_URI,
   mongooseOptions: {
     useNewUrlParser: true,
@@ -18,7 +16,7 @@ export default {
     useFindAndModify: false,
     autoIndex: false,
   },
-  jwtSecretKey: process.env.JWT_SECRET,
+  jwtSecretKey: process.env.JWT_SECRET || 'secret-dev',
   jwtOptions: {
     expiresIn: process.env.JWT_EXPIRES_IN,
   },
