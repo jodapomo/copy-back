@@ -18,5 +18,5 @@ export interface IRoomDTO {
   name: string;
   password: string;
   locked: boolean;
-  user: ITempUser;
+  username: string;
 }

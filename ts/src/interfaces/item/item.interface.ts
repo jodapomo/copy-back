@@ -1,6 +1,7 @@
 import { INote } from '../note/note.interface';
+import { Document } from 'mongoose';
 
-export interface IItem {
+export interface IItem extends Document {
   _id: string;
   user: {
     _id: string;

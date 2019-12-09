@@ -1,4 +1,6 @@
-export interface ITempUser {
+import { Document } from 'mongoose';
+
+export interface ITempUser extends Document {
   _id: string;
   username: string;
   online: string;

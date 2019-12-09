@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import { NoteSchema } from '../note/note.schema';
 import { LinkItemSchema } from './types/linkItem.schema';
 import { TextItemSchema } from './types/textItem.schema';
@@ -26,7 +26,12 @@ export const ItemSchema = new Schema(
   options,
 );
 
-export const Item = mongoose.model<IItem & mongoose.Document>('Item', ItemSchema);
+const ItemModel = mongoose.model<IItem & Document>('Item', ItemSchema);
 
-export const LinkItem = Item.discriminator('link', LinkItemSchema);
-export const TextItem = Item.discriminator('text', TextItemSchema);
+export const Item = {
+  name: 'Item',
+  model: ItemModel,
+};
+
+export const LinkItem = ItemModel.discriminator('link', LinkItemSchema);
+export const TextItem = ItemModel.discriminator('text', TextItemSchema);

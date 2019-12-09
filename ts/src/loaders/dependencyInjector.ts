@@ -3,8 +3,8 @@ import { models } from '../models';
 
 export default () => {
   try {
-    models.forEach(m => {
-      Container.set(m.name, m.model);
+    models.forEach(model => {
+      Container.set(model.name, model.model);
     });
   } catch (e) {
     throw e;

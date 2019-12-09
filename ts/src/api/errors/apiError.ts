@@ -1,4 +1,4 @@
-export class ErrorHandler extends Error {
+export class ApiError extends Error {
   constructor(public code: number, public message: string, public errors: object | string | undefined = undefined) {
     super();
     Error.captureStackTrace(this, this.constructor);

@@ -20,7 +20,7 @@ async function startServer() {
     }
 
     log(`
-          Server listening on port: ${chalk.green(String(config.port))} 
+          Server ready listening on port: ${chalk.green(String(config.port))} 
     `);
   });
 }
